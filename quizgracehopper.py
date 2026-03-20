@@ -36,76 +36,7 @@ quiz = [
         ],
         "resposta": "B"
     },
-    {
-        "pergunta": "Antes das contribuições de Grace Hopper, a programação era caracterizada por:",
-        "opcoes": [
-            "A) Linguagem simples e intuitiva.",
-            "B) Forte acessibilidade ao público geral.",
-            "C) Uso predominante de interfaces gráficas.",
-            "D) Alto nível de complexidade técnica."
-        ],
-        "resposta": "D"
-    },
-    {
-        "pergunta": "A transformação promovida por Grace Hopper permitiu:",
-        "opcoes": [
-            "A) A aproximação entre humanos e máquinas.",
-            "B) A substituição da lógica de programação.",
-            "C) O fim das linguagens de programação.",
-            "D) A automação total sem necessidade de código."
-        ],
-        "resposta": "A"
-    },
-    {
-        "pergunta": "A transformação promovida por Grace Hopper permitiu:",
-        "opcoes": [
-            "A) Apenas na área militar.",
-            "B) Apenas na construção de hardware.",
-            "C) Na evolução da tecnologia e dos computadores.",
-            "D) Exclusivamente na educação básica."
-        ],
-        "resposta": "C"
-    },
-    {
-        "pergunta": "A criação de compiladores pode ser entendida como um avanço porque:",
-        "opcoes": [
-            "A) Eliminou a necessidade de computadores.",
-            "B) Facilitou a comunicação entre humanos e máquinas.",
-            "C) Tornou a programação mais complexa.",
-            "D) Substituiu os programadores."
-        ],
-        "resposta": "B"
-    },
-    {
-        "pergunta": "O papel de Grace Hopper na história da computação evidencia:",
-        "opcoes": [
-            "A) A democratização do acesso à programação.",
-            "B) A dificuldade crescente da programação.",
-            "C) A centralização do conhecimento tecnológico.",
-            "D) A limitação da informática ao meio militar."
-        ],
-        "resposta": "A"
-    },
-    {
-        "pergunta": "A expressão 'linguagens mais acessíveis' indica que:",
-        "opcoes": [
-            "A) Apenas especialistas podiam utilizá-las.",
-            "B) Eram voltadas exclusivamente para máquinas.",
-            "C) Eram mais fáceis de compreender por humanos.",
-            "D) Não utilizavam código."
-        ],
-        "resposta": "C"
-    },
-    {
-        "pergunta": "Pode-se concluir que as contribuições de Grace Hopper:",
-        "opcoes": [
-            "A) Ajudaram a moldar a computação moderna.",
-            "B) Foram irrelevantes para a informática atual.",
-            "C) Reduziram o avanço tecnológico.",
-            "D) Tiveram impacto apenas temporário."
-        ],
-        "resposta": "A"
-    }
+    # Adicione as demais perguntas aqui...
 ]
 
 # -------------------------------
@@ -162,16 +93,19 @@ elif st.session_state.pagina == "quiz":
 
             if letra == q["resposta"]:
                 st.success("✅ Você acertou!")
-                st.session_state.pontuacao += 10
             else:
-                st.error(f"❌ Você errou! A resposta correta é {q['resposta']}")
+                st.error(f"❌ Você errou! A resposta correta é {q['resposta']})")
+
+            # Atualiza pontuação
+            if letra == q["resposta"]:
+                st.session_state.pontuacao += 10
 
             st.session_state.respondido = True
 
     # -------------------------
-    # BOTÃO PRÓXIMA
+    # BOTÃO PRÓXIMA (aparece abaixo do feedback)
     # -------------------------
-    else:
+    if st.session_state.respondido:
         if st.button("Próxima"):
             st.session_state.indice += 1
             st.session_state.respondido = False
