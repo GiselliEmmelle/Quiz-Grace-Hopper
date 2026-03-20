@@ -36,7 +36,7 @@ quiz = [
         ],
         "resposta": "B"
     },
-    # Adicione as demais perguntas aqui...
+    # Adicione mais perguntas conforme necessário
 ]
 
 # -------------------------------
@@ -77,33 +77,28 @@ elif st.session_state.pagina == "quiz":
     st.subheader(f"Questão {st.session_state.indice + 1}")
     st.write(q["pergunta"])
 
-    resposta = st.radio("Escolha uma opção:", q["opcoes"], key=st.session_state.indice)
+    resposta = st.radio("Escolha uma opção:", q["opcoes"], key=f"questao_{st.session_state.indice}")
 
-    # -------------------------
-    # Botão "Responder"
-    # -------------------------
-    if not st.session_state.respondido:
-        if st.button("Responder"):
-            letra = resposta[0].upper()
-            if letra == q["resposta"]:
-                st.session_state.feedback = "✅ Você acertou!"
-                st.session_state.pontuacao += 10
-            else:
-                st.session_state.feedback = f"❌ Você errou! A resposta correta é {q['resposta']}"
-            st.session_state.respondido = True
+    # Container para o botão Responder
+    with st.container():
+        if not st.session_state.respondido:
+            if st.button("Responder", key=f"responder_{st.session_state.indice}"):
+                letra = resposta[0].upper()
+                if letra == q["resposta"]:
+                    st.session_state.feedback = "✅ Você acertou!"
+                    st.session_state.pontuacao += 10
+                else:
+                    st.session_state.feedback = f"❌ Você errou! A resposta correta é {q['resposta']}"
+                st.session_state.respondido = True
 
-    # -------------------------
-    # Mostrar feedback e botão Próxima (apenas depois de responder)
-    # -------------------------
+    # Mostrar feedback e botão Próxima (aparece apenas depois de responder)
     if st.session_state.respondido:
         st.info(st.session_state.feedback)
-
-        if st.button("Próxima"):
+        if st.button("Próxima", key=f"proxima_{st.session_state.indice}"):
             st.session_state.indice += 1
             st.session_state.respondido = False
             st.session_state.feedback = ""
-
-            # Quando acabar as perguntas
+            # Se acabar as perguntas, vai para a página de resultado
             if st.session_state.indice >= len(quiz):
                 st.session_state.pagina = "resultado"
 
