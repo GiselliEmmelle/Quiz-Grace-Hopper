@@ -44,16 +44,12 @@ quiz = [
 # -------------------------------
 if "pagina" not in st.session_state:
     st.session_state.pagina = "inicio"
-
 if "indice" not in st.session_state:
     st.session_state.indice = 0
-
 if "pontuacao" not in st.session_state:
     st.session_state.pontuacao = 0
-
 if "nome" not in st.session_state:
     st.session_state.nome = ""
-
 if "respondido" not in st.session_state:
     st.session_state.respondido = False
 
@@ -62,9 +58,7 @@ if "respondido" not in st.session_state:
 # -------------------------------
 if st.session_state.pagina == "inicio":
     st.title("INSERIR TÍTULO AQUI")
-
     nome = st.text_input("Como você quer ser chamado?")
-
     if st.button("Iniciar Quiz"):
         if nome.strip():
             st.session_state.nome = nome
@@ -82,34 +76,29 @@ elif st.session_state.pagina == "quiz":
     st.subheader(f"Questão {st.session_state.indice + 1}")
     st.write(q["pergunta"])
 
-    resposta = st.radio("Escolha uma opção:", q["opcoes"])
+    resposta = st.radio("Escolha uma opção:", q["opcoes"], key=st.session_state.indice)
 
-    # -------------------------
-    # BOTÃO RESPONDER (só aparece se não respondeu)
-    # -------------------------
+    # Criando container para o botão "Responder"
+    responder_container = st.empty()
+
     if not st.session_state.respondido:
-        if st.button("Responder"):
+        if responder_container.button("Responder"):
             letra = resposta[0]
-
             if letra == q["resposta"]:
                 st.success("✅ Você acertou!")
                 st.session_state.pontuacao += 10
             else:
                 st.error(f"❌ Você errou! A resposta correta é {q['resposta']})")
-
             st.session_state.respondido = True
+            st.experimental_rerun()  # força o rerun para atualizar a interface
 
-    # -------------------------
-    # BOTÃO PRÓXIMA (aparece só depois de responder)
-    # -------------------------
+    # Botão "Próxima" só aparece depois de responder
     if st.session_state.respondido:
         if st.button("Próxima"):
             st.session_state.indice += 1
             st.session_state.respondido = False
-
             if st.session_state.indice >= len(quiz):
                 st.session_state.pagina = "resultado"
-
             st.rerun()
 
 # -------------------------------
@@ -117,10 +106,8 @@ elif st.session_state.pagina == "quiz":
 # -------------------------------
 elif st.session_state.pagina == "resultado":
     total = st.session_state.pontuacao
-
     st.title(f"Parabéns, {st.session_state.nome}!")
     st.write(f"Pontuação: {total}")
-
     if total >= 80:
         st.success("Excelente conhecimento sobre Grace Hopper!")
     elif total >= 50:
@@ -129,7 +116,6 @@ elif st.session_state.pagina == "resultado":
         st.warning("Você está no caminho certo!")
     else:
         st.error("Continue estudando e tente novamente!")
-
     if st.button("Reiniciar"):
         st.session_state.pagina = "inicio"
         st.session_state.indice = 0
