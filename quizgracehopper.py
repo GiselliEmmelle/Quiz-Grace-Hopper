@@ -1,9 +1,8 @@
 import streamlit as st
 
-# --- Título do App ---
 st.set_page_config(page_title="INSERIR TÍTULO AQUI")
 
-# Inicialização do estado de sessão
+# --- Inicialização do estado de sessão ---
 if "pagina" not in st.session_state:
     st.session_state.pagina = "inicio"
 if "indice" not in st.session_state:
@@ -37,10 +36,22 @@ perguntas = [
                    "A criação de dispositivos físicos mais rápidos."],
         "resposta": "C"
     },
-    # ... continue adicionando todas as perguntas conforme o código anterior ...
+    # Você pode continuar adicionando todas as perguntas restantes aqui...
 ]
 
 # --- Funções ---
+def iniciar_quiz():
+    if st.session_state.nome.strip() != "":
+        st.session_state.pagina = "quiz"
+        st.session_state.indice = 0
+        st.session_state.total = 0
+        st.session_state.respondido = False
+        st.session_state.feedback = ""
+        st.session_state.escolha = None
+        st.experimental_rerun()
+    else:
+        st.warning("Por favor, digite seu nome para iniciar o quiz.")
+
 def responder():
     escolha = st.session_state.escolha
     correta = perguntas[st.session_state.indice]["resposta"]
@@ -56,54 +67,38 @@ def proxima():
     st.session_state.feedback = ""
     st.session_state.respondido = False
     st.session_state.escolha = None
+    if st.session_state.indice >= len(perguntas):
+        st.session_state.pagina = "resultado"
     st.experimental_rerun()
 
-# --- Tela inicial ---
+# --- Tela Inicial ---
 if st.session_state.pagina == "inicio":
     st.title("INSERIR TÍTULO AQUI")
     st.session_state.nome = st.text_input("Como você quer ser chamado?")
-    if st.button("Iniciar Quiz"):
-        if st.session_state.nome.strip() != "":
-            st.session_state.pagina = "quiz"
-            st.experimental_rerun()
-        else:
-            st.warning("Por favor, digite seu nome para iniciar o quiz.")
+    st.button("Iniciar Quiz", on_click=iniciar_quiz)
 
-# --- Tela de perguntas ---
+# --- Tela de Quiz ---
 elif st.session_state.pagina == "quiz":
-    if st.session_state.indice < len(perguntas):
-        pergunta_atual = perguntas[st.session_state.indice]
-        st.subheader(f"QUESTÃO {st.session_state.indice + 1}")
-        st.write(pergunta_atual["pergunta"])
-        
-        # Exibir opções
-        st.radio(
-            "Escolha uma opção:",
-            ["A", "B", "C", "D"],
-            key="escolha",
-            format_func=lambda x: f"{x}) {pergunta_atual['opcoes'][['A','B','C','D'].index(x)]}",
-            disabled=st.session_state.respondido
-        )
-        
-        # Botão Responder
-        if not st.session_state.respondido:
-            if st.button("Responder"):
-                if st.session_state.escolha is None:
-                    st.warning("Selecione uma opção antes de responder!")
-                else:
-                    responder()
-                    st.experimental_rerun()
-        
-        # Feedback + botão Próxima
-        if st.session_state.respondido:
-            st.info(st.session_state.feedback)
-            if st.button("Próxima"):
-                proxima()
-    else:
-        st.session_state.pagina = "resultado"
-        st.experimental_rerun()
+    pergunta_atual = perguntas[st.session_state.indice]
+    st.subheader(f"QUESTÃO {st.session_state.indice + 1}")
+    st.write(pergunta_atual["pergunta"])
 
-# --- Tela de resultado ---
+    # Exibir opções
+    st.radio(
+        "Escolha uma opção:",
+        ["A", "B", "C", "D"],
+        key="escolha",
+        format_func=lambda x: f"{x}) {pergunta_atual['opcoes'][['A','B','C','D'].index(x)]}",
+        disabled=st.session_state.respondido
+    )
+
+    if not st.session_state.respondido:
+        st.button("Responder", on_click=responder)
+    else:
+        st.info(st.session_state.feedback)
+        st.button("Próxima", on_click=proxima)
+
+# --- Tela de Resultado ---
 elif st.session_state.pagina == "resultado":
     st.title(f"Parabéns, {st.session_state.nome}!")
     st.subheader(f"Seu total de pontos é: {st.session_state.total}")
