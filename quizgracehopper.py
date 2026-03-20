@@ -123,6 +123,9 @@ if "pontuacao" not in st.session_state:
 if "nome" not in st.session_state:
     st.session_state.nome = ""
 
+if "respondido" not in st.session_state:
+    st.session_state.respondido = False
+
 # -------------------------------
 # TELA INICIAL
 # -------------------------------
@@ -150,19 +153,33 @@ elif st.session_state.pagina == "quiz":
 
     resposta = st.radio("Escolha uma opção:", q["opcoes"])
 
-    if st.button("Próxima"):
-        # Pega a letra escolhida (A, B, C ou D)
-        letra_escolhida = resposta[0]
+    # -------------------------
+    # BOTÃO RESPONDER
+    # -------------------------
+    if not st.session_state.respondido:
+        if st.button("Responder"):
+            letra = resposta[0]
 
-        if letra_escolhida == q["resposta"]:
-            st.session_state.pontuacao += 10
+            if letra == q["resposta"]:
+                st.success("✅ Você acertou!")
+                st.session_state.pontuacao += 10
+            else:
+                st.error(f"❌ Você errou! A resposta correta é {q['resposta']}")
 
-        st.session_state.indice += 1
+            st.session_state.respondido = True
 
-        if st.session_state.indice >= len(quiz):
-            st.session_state.pagina = "resultado"
+    # -------------------------
+    # BOTÃO PRÓXIMA
+    # -------------------------
+    else:
+        if st.button("Próxima"):
+            st.session_state.indice += 1
+            st.session_state.respondido = False
 
-        st.rerun()
+            if st.session_state.indice >= len(quiz):
+                st.session_state.pagina = "resultado"
+
+            st.rerun()
 
 # -------------------------------
 # RESULTADO
@@ -186,4 +203,5 @@ elif st.session_state.pagina == "resultado":
         st.session_state.pagina = "inicio"
         st.session_state.indice = 0
         st.session_state.pontuacao = 0
+        st.session_state.respondido = False
         st.rerun()
