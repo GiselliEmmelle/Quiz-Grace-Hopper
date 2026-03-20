@@ -52,6 +52,8 @@ if "nome" not in st.session_state:
     st.session_state.nome = ""
 if "respondido" not in st.session_state:
     st.session_state.respondido = False
+if "feedback" not in st.session_state:
+    st.session_state.feedback = ""
 
 # -------------------------------
 # TELA INICIAL
@@ -63,7 +65,6 @@ if st.session_state.pagina == "inicio":
         if nome.strip():
             st.session_state.nome = nome
             st.session_state.pagina = "quiz"
-            st.rerun()
         else:
             st.warning("Digite seu nome!")
 
@@ -78,28 +79,32 @@ elif st.session_state.pagina == "quiz":
 
     resposta = st.radio("Escolha uma opção:", q["opcoes"], key=st.session_state.indice)
 
-    # Criando container para o botão "Responder"
-    responder_container = st.empty()
-
+    # -------------------------
+    # Botão "Responder" (só aparece se não respondeu)
+    # -------------------------
     if not st.session_state.respondido:
-        if responder_container.button("Responder"):
+        if st.button("Responder"):
             letra = resposta[0]
             if letra == q["resposta"]:
-                st.success("✅ Você acertou!")
+                st.session_state.feedback = "✅ Você acertou!"
                 st.session_state.pontuacao += 10
             else:
-                st.error(f"❌ Você errou! A resposta correta é {q['resposta']})")
+                st.session_state.feedback = f"❌ Você errou! A resposta correta é {q['resposta']})"
             st.session_state.respondido = True
-            st.experimental_rerun()  # força o rerun para atualizar a interface
 
-    # Botão "Próxima" só aparece depois de responder
+    # -------------------------
+    # Mostrar feedback depois de responder
+    # -------------------------
     if st.session_state.respondido:
+        st.info(st.session_state.feedback)
+
+        # Botão "Próxima" aparece só depois de responder
         if st.button("Próxima"):
             st.session_state.indice += 1
             st.session_state.respondido = False
+            st.session_state.feedback = ""
             if st.session_state.indice >= len(quiz):
                 st.session_state.pagina = "resultado"
-            st.rerun()
 
 # -------------------------------
 # RESULTADO
@@ -116,9 +121,10 @@ elif st.session_state.pagina == "resultado":
         st.warning("Você está no caminho certo!")
     else:
         st.error("Continue estudando e tente novamente!")
+
     if st.button("Reiniciar"):
         st.session_state.pagina = "inicio"
         st.session_state.indice = 0
         st.session_state.pontuacao = 0
         st.session_state.respondido = False
-        st.rerun()
+        st.session_state.feedback = ""
