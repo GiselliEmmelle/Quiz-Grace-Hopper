@@ -85,7 +85,7 @@ elif st.session_state.pagina == "quiz":
     resposta = st.radio("Escolha uma opção:", q["opcoes"])
 
     # -------------------------
-    # BOTÃO RESPONDER
+    # BOTÃO RESPONDER (só aparece se não respondeu)
     # -------------------------
     if not st.session_state.respondido:
         if st.button("Responder"):
@@ -93,17 +93,14 @@ elif st.session_state.pagina == "quiz":
 
             if letra == q["resposta"]:
                 st.success("✅ Você acertou!")
+                st.session_state.pontuacao += 10
             else:
                 st.error(f"❌ Você errou! A resposta correta é {q['resposta']})")
-
-            # Atualiza pontuação
-            if letra == q["resposta"]:
-                st.session_state.pontuacao += 10
 
             st.session_state.respondido = True
 
     # -------------------------
-    # BOTÃO PRÓXIMA (aparece abaixo do feedback)
+    # BOTÃO PRÓXIMA (aparece só depois de responder)
     # -------------------------
     if st.session_state.respondido:
         if st.button("Próxima"):
