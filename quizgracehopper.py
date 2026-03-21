@@ -115,7 +115,13 @@ perguntas = [
 
 # Tela inicial
 if st.session_state.pagina == "inicio":
-    st.title("INSERIR TÍTULO AQUI")
+    st.title("GRACE HOPPER: PIONEIRA NA COMPUTAÇÃO MODERNA.")
+
+    st.write(
+        "Bem-vindo ao quiz! 🚀\n\n"
+        "Teste seus conhecimentos sobre uma das pioneiras da computação "
+        "e descubra o quanto você sabe sobre sua contribuição para a tecnologia."
+    )
 
     nome = st.text_input("Como você quer ser chamado?")
 
