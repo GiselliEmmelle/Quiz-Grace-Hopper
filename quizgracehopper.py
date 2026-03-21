@@ -1,113 +1,186 @@
 import streamlit as st
 
-st.set_page_config(page_title="INSERIR TÍTULO AQUI")
-
-# --- Inicialização do estado de sessão ---
+# Inicialização do estado
 if "pagina" not in st.session_state:
     st.session_state.pagina = "inicio"
-if "indice" not in st.session_state:
-    st.session_state.indice = 0
-if "total" not in st.session_state:
+    st.session_state.pergunta_atual = 0
     st.session_state.total = 0
-if "nome" not in st.session_state:
     st.session_state.nome = ""
-if "feedback" not in st.session_state:
+    st.session_state.respondeu = False
     st.session_state.feedback = ""
-if "respondido" not in st.session_state:
-    st.session_state.respondido = False
-if "escolha" not in st.session_state:
-    st.session_state.escolha = None
 
-# --- Banco de perguntas ---
+# Banco de perguntas
 perguntas = [
     {
         "pergunta": "A importância de Grace Hopper está relacionada principalmente ao fato de ela ter:",
-        "opcoes": ["Desenvolvido componentes físicos dos computadores modernos.",
-                   "Trabalhado exclusivamente com hardware.",
-                   "Criado sistemas de navegação militar.",
-                   "Tornado a programação mais próxima da linguagem humana."],
-        "resposta": "D"
+        "opcoes": {
+            "a": "Desenvolvido componentes físicos dos computadores modernos.",
+            "b": "Trabalhado exclusivamente com hardware.",
+            "c": "Criado sistemas de navegação militar.",
+            "d": "Tornado a programação mais próxima da linguagem humana."
+        },
+        "correta": "d"
     },
     {
         "pergunta": "O desenvolvimento de compiladores por Grace Hopper contribuiu para:",
-        "opcoes": ["A eliminação das linguagens de programação.",
-                   "A substituição dos computadores por máquinas analógicas.",
-                   "A tradução de linguagens compreensíveis para código de máquina.",
-                   "A criação de dispositivos físicos mais rápidos."],
-        "resposta": "C"
+        "opcoes": {
+            "a": "A eliminação das linguagens de programação.",
+            "b": "A substituição dos computadores por máquinas analógicas.",
+            "c": "A tradução de linguagens compreensíveis para código de máquina.",
+            "d": "A criação de dispositivos físicos mais rápidos."
+        },
+        "correta": "c"
     },
-    # Você pode continuar adicionando todas as perguntas restantes aqui...
+    {
+        "pergunta": "Ao influenciar linguagens como o COBOL, Grace Hopper promoveu:",
+        "opcoes": {
+            "a": "O uso exclusivo da programação militar.",
+            "b": "A popularização de linguagens mais acessíveis.",
+            "c": "A redução do uso de computadores.",
+            "d": "A limitação da programação a especialistas."
+        },
+        "correta": "b"
+    },
+    {
+        "pergunta": "Antes das contribuições de Grace Hopper, a programação era caracterizada por:",
+        "opcoes": {
+            "a": "Linguagem simples e intuitiva.",
+            "b": "Forte acessibilidade ao público geral.",
+            "c": "Uso predominante de interfaces gráficas.",
+            "d": "Alto nível de complexidade técnica."
+        },
+        "correta": "d"
+    },
+    {
+        "pergunta": "A transformação promovida por Grace Hopper permitiu:",
+        "opcoes": {
+            "a": "A aproximação entre humanos e máquinas.",
+            "b": "A substituição da lógica de programação.",
+            "c": "O fim das linguagens de programação.",
+            "d": "A automação total sem necessidade de código."
+        },
+        "correta": "a"
+    },
+    {
+        "pergunta": "A transformação promovida por Grace Hopper permitiu:",
+        "opcoes": {
+            "a": "Apenas na área militar.",
+            "b": "Apenas na construção de hardware.",
+            "c": "Na evolução da tecnologia e dos computadores.",
+            "d": "Exclusivamente na educação básica."
+        },
+        "correta": "c"
+    },
+    {
+        "pergunta": "A criação de compiladores pode ser entendida como um avanço porque:",
+        "opcoes": {
+            "a": "Eliminou a necessidade de computadores.",
+            "b": "Facilitou a comunicação entre humanos e máquinas.",
+            "c": "Tornou a programação mais complexa.",
+            "d": "Substituiu os programadores."
+        },
+        "correta": "b"
+    },
+    {
+        "pergunta": "O papel de Grace Hopper na história da computação evidencia:",
+        "opcoes": {
+            "a": "A democratização do acesso à programação.",
+            "b": "A dificuldade crescente da programação.",
+            "c": "A centralização do conhecimento tecnológico.",
+            "d": "A limitação da informática ao meio militar."
+        },
+        "correta": "a"
+    },
+    {
+        "pergunta": "A expressão 'linguagens mais acessíveis' indica que:",
+        "opcoes": {
+            "a": "Apenas especialistas podiam utilizá-las.",
+            "b": "Eram voltadas exclusivamente para máquinas.",
+            "c": "Eram mais fáceis de compreender por humanos.",
+            "d": "Não utilizavam código."
+        },
+        "correta": "c"
+    },
+    {
+        "pergunta": "Pode-se concluir que as contribuições de Grace Hopper:",
+        "opcoes": {
+            "a": "Ajudaram a moldar a computação moderna.",
+            "b": "Foram irrelevantes para a informática atual.",
+            "c": "Reduziram o avanço tecnológico.",
+            "d": "Tiveram impacto apenas temporário."
+        },
+        "correta": "a"
+    }
 ]
 
-# --- Funções ---
-def iniciar_quiz():
-    if st.session_state.nome.strip() != "":
-        st.session_state.pagina = "quiz"
-        st.session_state.indice = 0
-        st.session_state.total = 0
-        st.session_state.respondido = False
-        st.session_state.feedback = ""
-        st.session_state.escolha = None
-        st.experimental_rerun()
-    else:
-        st.warning("Por favor, digite seu nome para iniciar o quiz.")
-
-def responder():
-    escolha = st.session_state.escolha
-    correta = perguntas[st.session_state.indice]["resposta"]
-    if escolha == correta:
-        st.session_state.feedback = "✅ Resposta correta!"
-        st.session_state.total += 10
-    else:
-        st.session_state.feedback = f"❌ Resposta errada! A alternativa correta era letra {correta}."
-    st.session_state.respondido = True
-
-def proxima():
-    st.session_state.indice += 1
-    st.session_state.feedback = ""
-    st.session_state.respondido = False
-    st.session_state.escolha = None
-    if st.session_state.indice >= len(perguntas):
-        st.session_state.pagina = "resultado"
-    st.experimental_rerun()
-
-# --- Tela Inicial ---
+# Tela inicial
 if st.session_state.pagina == "inicio":
     st.title("INSERIR TÍTULO AQUI")
-    st.session_state.nome = st.text_input("Como você quer ser chamado?")
-    st.button("Iniciar Quiz", on_click=iniciar_quiz)
 
-# --- Tela de Quiz ---
+    nome = st.text_input("Como você quer ser chamado?")
+
+    if st.button("Iniciar quiz"):
+        if nome.strip() != "":
+            st.session_state.nome = nome
+            st.session_state.pagina = "quiz"
+            st.rerun()
+        else:
+            st.warning("Digite seu nome para começar.")
+
+# Tela do quiz
 elif st.session_state.pagina == "quiz":
-    pergunta_atual = perguntas[st.session_state.indice]
-    st.subheader(f"QUESTÃO {st.session_state.indice + 1}")
-    st.write(pergunta_atual["pergunta"])
+    q = perguntas[st.session_state.pergunta_atual]
 
-    # Exibir opções
-    st.radio(
+    st.subheader(f"Questão {st.session_state.pergunta_atual + 1}")
+    st.write(q["pergunta"])
+
+    resposta = st.radio(
         "Escolha uma opção:",
-        ["A", "B", "C", "D"],
-        key="escolha",
-        format_func=lambda x: f"{x}) {pergunta_atual['opcoes'][['A','B','C','D'].index(x)]}",
-        disabled=st.session_state.respondido
+        list(q["opcoes"].keys()),
+        format_func=lambda x: f"{x.upper()}) {q['opcoes'][x]}"
     )
 
-    if not st.session_state.respondido:
-        st.button("Responder", on_click=responder)
-    else:
-        st.info(st.session_state.feedback)
-        st.button("Próxima", on_click=proxima)
+    if not st.session_state.respondeu:
+        if st.button("Responder"):
+            if resposta == q["correta"]:
+                st.session_state.total += 10
+                st.session_state.feedback = "✅ Resposta correta!"
+            else:
+                st.session_state.feedback = f"❌ Resposta errada. A correta era {q['correta'].upper()}."
+            
+            st.session_state.respondeu = True
+            st.rerun()
 
-# --- Tela de Resultado ---
+    else:
+        st.write(st.session_state.feedback)
+
+        if st.button("Próxima"):
+            st.session_state.pergunta_atual += 1
+            st.session_state.respondeu = False
+            st.session_state.feedback = ""
+
+            if st.session_state.pergunta_atual >= len(perguntas):
+                st.session_state.pagina = "resultado"
+
+            st.rerun()
+
+# Tela de resultado final
 elif st.session_state.pagina == "resultado":
     st.title(f"Parabéns, {st.session_state.nome}!")
-    st.subheader(f"Seu total de pontos é: {st.session_state.total}")
+    st.write(f"Seu total de pontos é: {st.session_state.total}")
 
-    if st.session_state.total >= 80:
-        st.success("Parabéns! Você demonstrou um excelente conhecimento sobre Grace Hopper e sua importância para a história da computação.")
-    elif st.session_state.total >= 50:
-        st.info("Você foi muito bem no quiz! Mostrou que já conhece grande parte da trajetória de Grace Hopper e suas contribuições.")
-    elif st.session_state.total >= 20:
-        st.warning("Você está no caminho certo! Já conhece alguns fatos importantes sobre Grace Hopper, mas ainda pode aprender mais.")
+    total = st.session_state.total
+
+    if total >= 80:
+        st.success("Excelente desempenho! Você domina o tema!")
+    elif total >= 50:
+        st.info("Muito bom! Você está quase lá!")
+    elif total >= 20:
+        st.warning("Bom começo! Continue aprendendo.")
     else:
-        st.error("Não se preocupe! Esse quiz é uma ótima oportunidade para conhecer melhor quem foi Grace Hopper. Estude mais e tente novamente!")
+        st.error("Continue estudando e tente novamente!")
+
+    if st.button("Reiniciar quiz"):
+        for key in st.session_state.keys():
+            del st.session_state[key]
+        st.rerun()
