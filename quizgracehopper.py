@@ -48,7 +48,7 @@ perguntas = [
             "b": "Forte acessibilidade ao público geral.",
             "c": "Uso predominante de interfaces gráficas.",
             "d": "Alto nível de complexidade técnica."
-        },
+    },
         "correta": "d"
     },
     {
